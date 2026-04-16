@@ -29,3 +29,9 @@ provider "aws" {
     }
   }
 }
+
+module "platform" {
+  source      = "./modules/platform"
+  environment = "poc"
+  project     = "lerma-ai-platform"
+}
