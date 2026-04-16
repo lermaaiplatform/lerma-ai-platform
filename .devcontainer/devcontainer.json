@@ -1,0 +1,20 @@
+{
+  "name": "Lerma AI Platform",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "version": "1.14.8"
+    },
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform",
+        "amazonwebservices.aws-toolkit-vscode",
+        "github.vscode-github-actions"
+      ]
+    }
+  },
+  "postCreateCommand": "tfenv use 1.14.8"
+}
