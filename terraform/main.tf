@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+     archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.0"
+    }
   }
 
   backend "s3" {
@@ -41,6 +45,25 @@ module "iam" {
   environment         = "poc"
   platform_bucket_arn = module.platform.platform_bucket_arn
   dynamodb_table_arn  = module.platform.dynamodb_table_arn
+}
+
+module "lambda" {
+  source                            = "./modules/lambda"
+  environment                       = "poc"
+  platform_bucket_name              = module.platform.platform_bucket_name
+  dynamodb_table_name               = module.platform.dynamodb_table_name
+  intake_lambda_role_arn            = module.iam.intake_lambda_role_arn
+  content_generator_lambda_role_arn = module.iam.content_generator_lambda_role_arn
+  tenant_id                         = "tenant-001"
+  from_email                        = var.tenant_001_email
+  notify_email                      = var.tenant_001_email
+}
+
+module "apigateway" {
+  source              = "./modules/apigateway"
+  environment         = "poc"
+  intake_handler_arn  = module.lambda.intake_handler_arn
+  intake_handler_name = module.lambda.intake_handler_name
 }
 
 module "tenant_001" {
