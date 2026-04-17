@@ -109,20 +109,6 @@ resource "aws_api_gateway_stage" "platform" {
   rest_api_id   = aws_api_gateway_rest_api.platform.id
   deployment_id = aws_api_gateway_deployment.platform.id
   stage_name    = var.environment
-
-  access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.api_gateway.arn
-    format = jsonencode({
-      requestId      = "$context.requestId"
-      ip             = "$context.identity.sourceIp"
-      requestTime    = "$context.requestTime"
-      httpMethod     = "$context.httpMethod"
-      status         = "$context.status"
-      protocol       = "$context.protocol"
-      responseLength = "$context.responseLength"
-      errorMessage   = "$context.error.message"
-    })
-  }
 }
 
 # API Key
