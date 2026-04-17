@@ -36,6 +36,13 @@ module "platform" {
   project     = "lerma-ai-platform"
 }
 
+module "iam" {
+  source              = "./modules/iam"
+  environment         = "poc"
+  platform_bucket_arn = module.platform.platform_bucket_arn
+  dynamodb_table_arn  = module.platform.dynamodb_table_arn
+}
+
 module "tenant_001" {
   source               = "./modules/tenant"
   tenant_id            = "tenant-001"
