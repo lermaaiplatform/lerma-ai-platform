@@ -66,6 +66,12 @@ module "apigateway" {
   intake_handler_name = module.lambda.intake_handler_name
 }
 
+module "ses" {
+  source       = "./modules/ses"
+  environment  = "poc"
+  from_email   = var.tenant_001_email
+}
+
 module "tenant_001" {
   source               = "./modules/tenant"
   tenant_id            = "tenant-001"
