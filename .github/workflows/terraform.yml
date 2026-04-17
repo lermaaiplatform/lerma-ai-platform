@@ -1,5 +1,10 @@
 name: Terraform CI/CD
 
+# NOTE: Auto-apply on push to main is intentional for tenant-001
+# active development phase. Branch protection and PR approval gates
+# will be introduced at tenant-002 onboarding.
+# See ADR-003 for the governance decision record.
+
 on:
   push:
     branches:
