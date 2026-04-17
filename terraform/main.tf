@@ -35,3 +35,13 @@ module "platform" {
   environment = "poc"
   project     = "lerma-ai-platform"
 }
+
+module "tenant_001" {
+  source               = "./modules/tenant"
+  tenant_id            = "tenant-001"
+  tenant_name          = "fathers-coaching-business"
+  tenant_email         = var.tenant_001_email
+  platform_bucket      = module.platform.platform_bucket_name
+  dynamodb_table       = module.platform.dynamodb_table_name
+  cognito_user_pool_id = module.platform.cognito_user_pool_id
+}
