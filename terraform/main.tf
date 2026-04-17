@@ -72,6 +72,14 @@ module "ses" {
   from_email  = var.tenant_001_email
 }
 
+module "eventbridge" {
+  source                 = "./modules/eventbridge"
+  environment            = "poc"
+  content_generator_arn  = module.lambda.content_generator_arn
+  content_generator_name = module.lambda.content_generator_name
+  tenant_id              = "tenant-001"
+}
+
 module "tenant_001" {
   source               = "./modules/tenant"
   tenant_id            = "tenant-001"
