@@ -38,6 +38,10 @@ resource "aws_dynamodb_table_item" "tenant_record" {
     status     = { S = "ACTIVE" }
     createdAt  = { S = timestamp() }
   })
+
+  lifecycle {
+    ignore_changes = [item]
+  }
 }
 
 # Cognito Tenant User
