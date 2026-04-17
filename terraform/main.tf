@@ -67,9 +67,9 @@ module "apigateway" {
 }
 
 module "ses" {
-  source       = "./modules/ses"
-  environment  = "poc"
-  from_email   = var.tenant_001_email
+  source      = "./modules/ses"
+  environment = "poc"
+  from_email  = var.tenant_001_email
 }
 
 module "tenant_001" {
