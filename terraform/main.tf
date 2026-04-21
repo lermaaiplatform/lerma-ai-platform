@@ -80,6 +80,14 @@ module "eventbridge" {
   tenant_id              = "tenant-001"
 }
 
+module "datalake" {
+  source               = "./modules/datalake"
+  environment          = "poc"
+  platform_bucket_name = module.platform.platform_bucket_name
+  platform_bucket_arn  = module.platform.platform_bucket_arn
+  tenant_ids           = ["tenant-001"]
+}
+
 module "tenant_001" {
   source               = "./modules/tenant"
   tenant_id            = "tenant-001"
