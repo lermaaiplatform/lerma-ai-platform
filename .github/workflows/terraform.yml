@@ -42,6 +42,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Package Lambda functions
+        working-directory: .
+        run: |
+          cd lambda/intake-handler
+          zip -r intake-handler.zip index.py
+          cd ../content-generator
+          zip -r content-generator.zip index.py
+
       - name: Terraform Init
         run: terraform init
 
