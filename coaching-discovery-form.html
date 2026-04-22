@@ -5,315 +5,145 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Executive Coaching Discovery</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
-
-  :root {
-    --ink: #1a1410;
-    --cream: #f7f3ee;
-    --warm: #e8dfd4;
-    --gold: #b8956a;
-    --gold-light: #d4b48a;
-    --muted: #7a6e65;
-    --border: #d9d0c7;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--ink);
-    min-height: 100vh;
-    padding: 60px 24px;
-  }
-
-  .page {
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  .header {
-    text-align: center;
-    margin-bottom: 56px;
-    animation: fadeUp 0.8s ease both;
-  }
-
-  .eyebrow {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 16px;
-  }
-
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 6vw, 52px);
-    font-weight: 300;
-    line-height: 1.1;
-    color: var(--ink);
-    margin-bottom: 20px;
-  }
-
-  h1 em {
-    font-style: italic;
-    color: var(--gold);
-  }
-
-  .intro {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--muted);
-    max-width: 480px;
-    margin: 0 auto;
-  }
-
-  .divider {
-    width: 48px;
-    height: 1px;
-    background: var(--gold);
-    margin: 28px auto;
-  }
-
-  .form-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 40px;
-    margin-bottom: 20px;
-    animation: fadeUp 0.8s ease both;
-  }
-
-  .card-number {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    margin-bottom: 8px;
-    display: block;
-  }
-
-  .card-question {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 400;
-    line-height: 1.35;
-    color: var(--ink);
-    margin-bottom: 8px;
-  }
-
-  .card-hint {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 20px;
-  }
-
-  textarea {
-    width: 100%;
-    min-height: 120px;
-    padding: 14px 16px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    background: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--ink);
-    resize: vertical;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-  }
-
-  textarea:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(184, 149, 106, 0.12);
-    background: white;
-  }
-
-  textarea::placeholder { color: #b5aca3; }
-
-  .scale-group {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 4px;
-  }
-
-  .scale-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-  }
-
-  .scale-label input[type="radio"] { display: none; }
-
-  .scale-btn {
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    background: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 17px;
-    color: var(--muted);
-    transition: all 0.15s;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .scale-label input:checked + .scale-btn {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: white;
-  }
-
-  .scale-label:hover .scale-btn {
-    border-color: var(--gold-light);
-    color: var(--gold);
-  }
-
-  .scale-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 8px;
-    letter-spacing: 0.04em;
-  }
-
-  .linkedin-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    background: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .linkedin-input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(184, 149, 106, 0.12);
-    background: white;
-  }
-
-  .linkedin-input::placeholder { color: #b5aca3; }
-
-  .submit-wrap {
-    text-align: center;
-    margin-top: 40px;
-  }
-
-  .submit-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--ink);
-    color: var(--cream);
-    border: none;
-    padding: 16px 40px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: background 0.2s;
-  }
-
-  .submit-btn:hover { background: var(--gold); }
-
-  .submit-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  .footer-note {
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 16px;
-    line-height: 1.6;
-  }
-
-  .success {
-    display: none;
-    text-align: center;
-    padding: 60px 40px;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-  }
-
-  .success-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--gold);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-  }
-
-  .success-icon svg {
-    width: 22px;
-    height: 22px;
-    stroke: white;
-    fill: none;
-    stroke-width: 2;
-  }
-
-  .success h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
-    font-weight: 300;
-    margin-bottom: 12px;
-  }
-
-  .success p {
-    font-size: 15px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (max-width: 480px) {
-    .form-card { padding: 28px 24px; }
-    .scale-btn { width: 36px; height: 36px; font-size: 15px; }
-  }
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+:root{--ink:#1a1410;--cream:#f7f3ee;--gold:#b8956a;--gold-light:#d4b48a;--muted:#7a6e65;--border:#d9d0c7;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;padding:60px 24px;}
+.page{max-width:680px;margin:0 auto;}
+.header{text-align:center;margin-bottom:56px;}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,6vw,52px);font-weight:300;line-height:1.1;margin-bottom:20px;}
+h1 em{font-style:italic;color:var(--gold);}
+.intro{font-size:15px;line-height:1.7;color:var(--muted);max-width:480px;margin:0 auto;}
+.divider{width:48px;height:1px;background:var(--gold);margin:28px auto;}
+.form-card{background:white;border:1px solid var(--border);border-radius:2px;padding:40px;margin-bottom:20px;}
+.card-number{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:0.1em;color:var(--gold);margin-bottom:8px;display:block;}
+.card-question{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;line-height:1.35;margin-bottom:8px;}
+.card-hint{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+textarea{width:100%;min-height:120px;padding:14px 16px;border:1px solid var(--border);border-radius:2px;background:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;resize:vertical;outline:none;}
+textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,149,106,0.12);background:white;}
+textarea::placeholder{color:#b5aca3;}
+.scale-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.scale-label{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;}
+.scale-label input[type=radio]{display:none;}
+.scale-btn{width:44px;height:44px;border:1px solid var(--border);border-radius:2px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--muted);cursor:pointer;}
+.scale-label input:checked+.scale-btn{background:var(--gold);border-color:var(--gold);color:white;}
+.scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:8px;}
+.linkedin-input{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:2px;background:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+.linkedin-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,149,106,0.12);background:white;}
+.submit-wrap{text-align:center;margin-top:40px;}
+.submit-btn{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--cream);border:none;padding:16px 40px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border-radius:2px;}
+.submit-btn:hover{background:var(--gold);}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.footer-note{text-align:center;font-size:12px;color:var(--muted);margin-top:16px;line-height:1.6;}
+.success{display:none;text-align:center;padding:60px 40px;background:white;border:1px solid var(--border);border-radius:2px;}
+.success-icon{width:48px;height:48px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
+.success h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;margin-bottom:12px;}
+.success p{font-size:15px;color:var(--muted);line-height:1.7;}
 </style>
 </head>
 <body>
-
 <div class="page">
-
-  <div class="header">
-    <p class="eyebrow">Executive Coaching Platform</p>
-    <h1>Tell me about<br><em>your work</em></h1>
-    <div class="divider"></div>
-    <p class="intro">Five short questions to help us build an AI system that works the way you do and sounds like you.</p>
-  </div>
-
-  <form id="discoveryForm">
-
-    <div class="form-card">
-      <span class="card-number">Question 01</span>
-      <p class="card-question">Who is your best current client, and how did they find
+<div class="header">
+<p class="eyebrow">Executive Coaching Platform</p>
+<h1>Tell me about<br><em>your work</em></h1>
+<div class="divider"></div>
+<p class="intro">Five short questions to help us build an AI system that works the way you do and sounds like you.</p>
+</div>
+<form id="discoveryForm">
+<div class="form-card">
+<span class="card-number">Question 01</span>
+<p class="card-question">Who is your best current client, and how did they find you?</p>
+<p class="card-hint">Tell me their title, their industry, and how they reached out. What made them decide to contact you specifically?</p>
+<textarea name="best_client" placeholder="She is a VP of Operations at a mid-size healthcare company..." rows="5"></textarea>
+</div>
+<div class="form-card">
+<span class="card-number">Question 02</span>
+<p class="card-question">What is one thing a client has actually said about working with you?</p>
+<p class="card-hint">Not how you would describe it. Their words, as close as you can remember.</p>
+<textarea name="client_quote" placeholder="He said, I finally feel like I know what kind of leader I am..." rows="4"></textarea>
+</div>
+<div class="form-card">
+<span class="card-number">Question 03</span>
+<p class="card-question">Share two or three LinkedIn posts or comments that got a real response.</p>
+<p class="card-hint">Copy and paste them here, or describe what you wrote and what happened.</p>
+<textarea name="linkedin_examples" placeholder="I wrote a post about the difference between confidence and certainty..." rows="6"></textarea>
+</div>
+<div class="form-card">
+<span class="card-number">Question 04</span>
+<p class="card-question">If you could clone one current client, who would it be?</p>
+<p class="card-hint">Describe their title, industry, company size, and what made the engagement feel right.</p>
+<textarea name="ideal_client" placeholder="A Chief People Officer at a 500-person tech company..." rows="4"></textarea>
+</div>
+<div class="form-card">
+<span class="card-number">Question 05</span>
+<p class="card-question">How comfortable are you with AI-drafted content going out under your name?</p>
+<p class="card-hint">If I sent you three draft LinkedIn comments every morning to review before posting, would you use them?</p>
+<div class="scale-group">
+<label class="scale-label"><input type="radio" name="ai_trust" value="1"><span class="scale-btn">1</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="2"><span class="scale-btn">2</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="3"><span class="scale-btn">3</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="4"><span class="scale-btn">4</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="5"><span class="scale-btn">5</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="6"><span class="scale-btn">6</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="7"><span class="scale-btn">7</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="8"><span class="scale-btn">8</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="9"><span class="scale-btn">9</span></label>
+<label class="scale-label"><input type="radio" name="ai_trust" value="10"><span class="scale-btn">10</span></label>
+</div>
+<div class="scale-labels"><span>Not comfortable at all</span><span>Fully comfortable</span></div>
+<div style="margin-top:20px;">
+<p class="card-hint" style="margin-bottom:8px;">What would need to be true for that number to go up?</p>
+<textarea name="ai_trust_comment" placeholder="I would need to read everything before it goes out..." rows="3"></textarea>
+</div>
+</div>
+<div class="form-card">
+<span class="card-number">One More Thing</span>
+<p class="card-question">Your LinkedIn profile URL</p>
+<p class="card-hint">So we can look at your recent activity and make sure the system matches what you are already doing well.</p>
+<input type="text" name="linkedin_url" class="linkedin-input" placeholder="https://linkedin.com/in/yourname">
+</div>
+<div class="submit-wrap">
+<button type="submit" class="submit-btn">Submit</button>
+<p class="footer-note">Your answers go directly to Jonathan.<br>Nothing is published or shared anywhere else.</p>
+</div>
+</form>
+<div class="success" id="successMsg">
+<div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div>
+<h2>Thank you.</h2>
+<p>Your answers have been saved.<br>Jonathan will review them before you meet.</p>
+</div>
+</div>
+<script>
+document.getElementById('discoveryForm').addEventListener('submit',async function(e){
+e.preventDefault();
+var btn=this.querySelector('.submit-btn');
+btn.textContent='Sending...';
+btn.disabled=true;
+var data={};
+var formData=new FormData(this);
+formData.forEach(function(value,key){data[key]=value;});
+try{
+var response=await fetch('https://40q0x4hsii.execute-api.us-east-2.amazonaws.com/poc/intake',{
+method:'POST',
+headers:{'Content-Type':'application/json','x-api-key':'K51UtbLYOA5N25lrx0DvJacUx3uemrWh7Apb8SJD'},
+body:JSON.stringify({name:'Discovery Form',title:'Executive Coach',company:'Self Employed',email:'lermaaiplatform.aws@gmail.com',source:'discovery-form',message:JSON.stringify(data,null,2)})
+});
+if(response.ok){
+this.style.display='none';
+document.getElementById('successMsg').style.display='block';
+window.scrollTo({top:0,behavior:'smooth'});
+}else{
+btn.textContent='Submit';
+btn.disabled=false;
+alert('Something went wrong. Please try again.');
+}
+}catch(err){
+btn.textContent='Submit';
+btn.disabled=false;
+alert('Something went wrong. Please try again.');
+}
+});
+</script>
+</body>
+</html>
