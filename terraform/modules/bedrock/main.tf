@@ -72,6 +72,7 @@ resource "aws_s3vectors_vector_bucket" "kb" {
 resource "aws_bedrockagent_knowledge_base" "tenant" {
   name        = "lerma-platform-kb-${var.tenant_id}-${var.environment}"
   description = "Knowledge base for ${var.tenant_id} containing coaching methodology and brand voice"
+  depends_on  = [aws_s3vectors_index.kb]
   role_arn    = aws_iam_role.bedrock_kb.arn
 
   knowledge_base_configuration {
@@ -157,4 +158,13 @@ resource "aws_bedrock_guardrail" "tenant" {
       type = "PROFANITY"
     }
   }
+}
+
+# S3 Vectors Index for Knowledge Base embeddings
+resource "aws_s3vectors_index" "kb" {
+  vector_bucket_name = aws_s3vectors_vector_bucket.kb.vector_bucket_name
+  index_name         = "lerma-platform-index-${var.tenant_id}-${var.environment}"
+  data_type          = "float32"
+  dimension          = 1024
+  distance_metric    = "cosine"
 }
