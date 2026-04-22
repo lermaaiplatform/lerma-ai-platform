@@ -88,6 +88,14 @@ module "datalake" {
   tenant_ids           = ["tenant-001"]
 }
 
+module "bedrock" {
+  source               = "./modules/bedrock"
+  environment          = "poc"
+  tenant_id            = "tenant-001"
+  platform_bucket_name = module.platform.platform_bucket_name
+  platform_bucket_arn  = module.platform.platform_bucket_arn
+}
+
 module "tenant_001" {
   source               = "./modules/tenant"
   tenant_id            = "tenant-001"
