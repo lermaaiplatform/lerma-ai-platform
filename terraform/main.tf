@@ -96,6 +96,13 @@ module "bedrock" {
   platform_bucket_arn  = module.platform.platform_bucket_arn
 }
 
+module "frontend" {
+  source          = "./modules/frontend"
+  environment     = "poc"
+  tenant_id       = "tenant-001"
+  api_gateway_url = "https://40q0x4hsii.execute-api.us-east-2.amazonaws.com/poc"
+}
+
 module "tenant_001" {
   source               = "./modules/tenant"
   tenant_id            = "tenant-001"
