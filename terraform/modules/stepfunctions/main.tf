@@ -1,6 +1,7 @@
 # Step Functions State Machine: Prospect Intake Workflow
 resource "aws_sfn_state_machine" "intake_workflow" {
   name     = "lerma-platform-intake-workflow-${var.tenant_id}-${var.environment}"
+  depends_on = [aws_cloudwatch_log_resource_policy.stepfunctions]
   role_arn = var.step_functions_role_arn
 
   definition = jsonencode({
@@ -127,6 +128,7 @@ resource "aws_sfn_state_machine" "intake_workflow" {
 # Step Functions State Machine: Content Generation Workflow
 resource "aws_sfn_state_machine" "content_workflow" {
   name     = "lerma-platform-content-workflow-${var.tenant_id}-${var.environment}"
+  depends_on = [aws_cloudwatch_log_resource_policy.stepfunctions]
   role_arn = var.step_functions_role_arn
 
   definition = jsonencode({
@@ -248,4 +250,33 @@ resource "aws_sfn_state_machine" "content_workflow" {
 resource "aws_cloudwatch_log_group" "stepfunctions" {
   name              = "/aws/states/lerma-aiplatform-${var.tenant_id}-${var.environment}"
   retention_in_days = 30
+}
+# CloudWatch Log Resource Policy for Step Functions
+resource "aws_cloudwatch_log_resource_policy" "stepfunctions" {
+  policy_name = "lerma-platform-sfn-logs-${var.tenant_id}-${var.environment}"
+
+  policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowStepFunctionsLogs"
+        Effect = "Allow"
+        Principal = {
+          Service = "states.amazonaws.com"
+        }
+        Action = [
+          "logs:CreateLogDelivery",
+          "logs:GetLogDelivery",
+          "logs:UpdateLogDelivery",
+          "logs:DeleteLogDelivery",
+          "logs:ListLogDeliveries",
+          "logs:PutLogEvents",
+          "logs:PutResourcePolicy",
+          "logs:DescribeResourcePolicies",
+          "logs:DescribeLogGroups"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
