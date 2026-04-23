@@ -60,8 +60,8 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -var="tenant_001_email=${{ secrets.TENANT_001_EMAIL }}"
+        run: terraform plan -var="tenant_001_email=${{ secrets.TENANT_001_EMAIL }}" -var="proxycurl_api_key=${{ secrets.PROXYCURL_API_KEY }}"
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -var="tenant_001_email=${{ secrets.TENANT_001_EMAIL }}"
+        run: terraform apply -auto-approve -var="tenant_001_email=${{ secrets.TENANT_001_EMAIL }}" -var="proxycurl_api_key=${{ secrets.PROXYCURL_API_KEY }}"

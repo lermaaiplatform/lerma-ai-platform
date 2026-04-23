@@ -112,6 +112,13 @@ module "stepfunctions" {
   step_functions_role_arn = module.iam.step_functions_role_arn
 }
 
+module "secrets" {
+  source            = "./modules/secrets"
+  environment       = "poc"
+  tenant_id         = "tenant-001"
+  proxycurl_api_key = var.proxycurl_api_key
+}
+
 module "tenant_001" {
   source               = "./modules/tenant"
   tenant_id            = "tenant-001"
