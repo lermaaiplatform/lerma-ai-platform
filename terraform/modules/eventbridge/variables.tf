@@ -17,3 +17,12 @@ variable "tenant_id" {
   description = "Tenant identifier"
   type        = string
 }
+variable "watchlist_fetcher_arn" {
+  description = "ARN of the watchlist fetcher Lambda function"
+  type        = string
+}
+
+variable "watchlist_fetcher_name" {
+  description = "Name of the watchlist fetcher Lambda function"
+  type        = string
+}

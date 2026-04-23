@@ -54,3 +54,30 @@ resource "aws_cloudwatch_log_group" "eventbridge" {
   name              = "/aws/eventbridge/lerma-aiplatform-${var.environment}"
   retention_in_days = 30
 }
+# EventBridge Scheduled Rule: Watchlist Fetcher
+resource "aws_cloudwatch_event_rule" "watchlist_fetch" {
+  name                = "lerma-platform-watchlist-fetch-${var.environment}"
+  description         = "Triggers watchlist fetcher Lambda nightly at 11PM ET"
+  schedule_expression = "cron(0 3 ? * MON-FRI *)"
+  state               = "ENABLED"
+}
+
+resource "aws_cloudwatch_event_target" "watchlist_fetch" {
+  rule      = aws_cloudwatch_event_rule.watchlist_fetch.name
+  target_id = "WatchlistFetcherLambda"
+  arn       = var.watchlist_fetcher_arn
+
+  input = jsonencode({
+    source    = "eventbridge.scheduled"
+    tenantId  = var.tenant_id
+    eventType = "NIGHTLY_WATCHLIST_FETCH"
+  })
+}
+
+resource "aws_lambda_permission" "eventbridge_watchlist_fetcher" {
+  statement_id  = "AllowEventBridgeInvokeWatchlist"
+  action        = "lambda:InvokeFunction"
+  function_name = var.watchlist_fetcher_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.watchlist_fetch.arn
+}

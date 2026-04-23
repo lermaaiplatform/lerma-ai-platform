@@ -79,8 +79,17 @@ module "eventbridge" {
   environment            = "poc"
   content_generator_arn  = module.lambda.content_generator_arn
   content_generator_name = module.lambda.content_generator_name
+  watchlist_fetcher_arn  = module.lambda.watchlist_fetcher_arn
+  watchlist_fetcher_name = module.lambda.watchlist_fetcher_name
   tenant_id              = "tenant-001"
 }
+
+
+
+
+
+
+
 
 module "datalake" {
   source               = "./modules/datalake"
