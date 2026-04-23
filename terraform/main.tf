@@ -103,6 +103,15 @@ module "frontend" {
   api_gateway_url = "https://40q0x4hsii.execute-api.us-east-2.amazonaws.com/poc"
 }
 
+module "stepfunctions" {
+  source                  = "./modules/stepfunctions"
+  environment             = "poc"
+  tenant_id               = "tenant-001"
+  intake_handler_arn      = module.lambda.intake_handler_arn
+  content_generator_arn   = module.lambda.content_generator_arn
+  step_functions_role_arn = module.iam.step_functions_role_arn
+}
+
 module "tenant_001" {
   source               = "./modules/tenant"
   tenant_id            = "tenant-001"
