@@ -48,7 +48,7 @@ def get_default_template():
 def generate_with_bedrock(prompt):
     try:
         response = bedrock.invoke_model(
-            modelId='anthropic.claude-sonnet-4-5',
+            modelId='anthropic.claude-3-5-sonnet-20241022-v2:0',
             body=json.dumps({
                 'anthropic_version': 'bedrock-2023-05-31',
                 'max_tokens': 1000,
