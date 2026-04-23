@@ -1,7 +1,6 @@
 # Step Functions State Machine: Prospect Intake Workflow
 resource "aws_sfn_state_machine" "intake_workflow" {
   name     = "lerma-platform-intake-workflow-${var.tenant_id}-${var.environment}"
-  depends_on = [aws_cloudwatch_log_resource_policy.stepfunctions]
   role_arn = var.step_functions_role_arn
 
   definition = jsonencode({
@@ -9,11 +8,11 @@ resource "aws_sfn_state_machine" "intake_workflow" {
     StartAt = "ValidatePayload"
     States = {
       ValidatePayload = {
-        Type = "Task"
+        Type     = "Task"
         Resource = "arn:aws:states:::lambda:invoke"
         Parameters = {
           FunctionName = var.intake_handler_arn
-          "Payload.$" = "$"
+          "Payload.$"  = "$"
         }
         ResultPath = "$.validation"
         Retry = [
@@ -33,14 +32,13 @@ resource "aws_sfn_state_machine" "intake_workflow" {
         ]
         Next = "ScoreProspect"
       }
-
       ScoreProspect = {
-        Type = "Task"
+        Type     = "Task"
         Resource = "arn:aws:states:::lambda:invoke"
         Parameters = {
           FunctionName = var.intake_handler_arn
           Payload = {
-            action = "SCORE_PROSPECT"
+            action   = "SCORE_PROSPECT"
             "data.$" = "$.validation"
           }
         }
@@ -62,9 +60,8 @@ resource "aws_sfn_state_machine" "intake_workflow" {
         ]
         Next = "CheckScore"
       }
-
       CheckScore = {
-        Type    = "Choice"
+        Type = "Choice"
         Choices = [
           {
             Variable      = "$.score.Payload.statusCode"
@@ -74,9 +71,8 @@ resource "aws_sfn_state_machine" "intake_workflow" {
         ]
         Default = "IntakeFailed"
       }
-
       GenerateFollowUp = {
-        Type = "Task"
+        Type     = "Task"
         Resource = "arn:aws:states:::lambda:invoke"
         Parameters = {
           FunctionName = var.content_generator_arn
@@ -104,12 +100,10 @@ resource "aws_sfn_state_machine" "intake_workflow" {
         ]
         Next = "IntakeComplete"
       }
-
       IntakeComplete = {
-        Type   = "Succeed"
+        Type    = "Succeed"
         Comment = "Prospect intake completed successfully"
       }
-
       IntakeFailed = {
         Type  = "Fail"
         Error = "IntakeWorkflowFailed"
@@ -117,18 +111,11 @@ resource "aws_sfn_state_machine" "intake_workflow" {
       }
     }
   })
-
-  logging_configuration {
-    log_destination        = "${aws_cloudwatch_log_group.stepfunctions.arn}:*"
-    include_execution_data = true
-    level                  = "ALL"
-  }
 }
 
 # Step Functions State Machine: Content Generation Workflow
 resource "aws_sfn_state_machine" "content_workflow" {
   name     = "lerma-platform-content-workflow-${var.tenant_id}-${var.environment}"
-  depends_on = [aws_cloudwatch_log_resource_policy.stepfunctions]
   role_arn = var.step_functions_role_arn
 
   definition = jsonencode({
@@ -136,13 +123,13 @@ resource "aws_sfn_state_machine" "content_workflow" {
     StartAt = "GeneratePost"
     States = {
       GeneratePost = {
-        Type = "Task"
+        Type     = "Task"
         Resource = "arn:aws:states:::lambda:invoke"
         Parameters = {
-          FunctionName = var.content_generator_arn
+          FunctionName  = var.content_generator_arn
           Payload = {
-            action   = "GENERATE_POST"
-            tenantId = var.tenant_id
+            action        = "GENERATE_POST"
+            tenantId      = var.tenant_id
             "eventType.$" = "$.eventType"
           }
         }
@@ -164,9 +151,8 @@ resource "aws_sfn_state_machine" "content_workflow" {
         ]
         Next = "GenerateComments"
       }
-
       GenerateComments = {
-        Type = "Task"
+        Type     = "Task"
         Resource = "arn:aws:states:::lambda:invoke"
         Parameters = {
           FunctionName = var.content_generator_arn
@@ -194,16 +180,15 @@ resource "aws_sfn_state_machine" "content_workflow" {
         ]
         Next = "SendDigest"
       }
-
       SendDigest = {
-        Type = "Task"
+        Type     = "Task"
         Resource = "arn:aws:states:::lambda:invoke"
         Parameters = {
           FunctionName = var.content_generator_arn
           Payload = {
-            action   = "SEND_DIGEST"
-            tenantId = var.tenant_id
-            "post.$" = "$.post"
+            action       = "SEND_DIGEST"
+            tenantId     = var.tenant_id
+            "post.$"     = "$.post"
             "comments.$" = "$.comments"
           }
         }
@@ -225,12 +210,10 @@ resource "aws_sfn_state_machine" "content_workflow" {
         ]
         Next = "ContentComplete"
       }
-
       ContentComplete = {
         Type    = "Succeed"
         Comment = "Content generation workflow completed successfully"
       }
-
       ContentFailed = {
         Type  = "Fail"
         Error = "ContentWorkflowFailed"
@@ -238,45 +221,10 @@ resource "aws_sfn_state_machine" "content_workflow" {
       }
     }
   })
-
-  logging_configuration {
-    log_destination        = "${aws_cloudwatch_log_group.stepfunctions.arn}:*"
-    include_execution_data = true
-    level                  = "ALL"
-  }
 }
 
 # CloudWatch Log Group for Step Functions
 resource "aws_cloudwatch_log_group" "stepfunctions" {
   name              = "/aws/states/lerma-aiplatform-${var.tenant_id}-${var.environment}"
   retention_in_days = 30
-}
-# CloudWatch Log Resource Policy for Step Functions
-resource "aws_cloudwatch_log_resource_policy" "stepfunctions" {
-  policy_name = "lerma-platform-sfn-logs-${var.tenant_id}-${var.environment}"
-
-  policy_document = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = "AllowStepFunctionsLogs"
-        Effect = "Allow"
-        Principal = {
-          Service = "states.amazonaws.com"
-        }
-        Action = [
-          "logs:CreateLogDelivery",
-          "logs:GetLogDelivery",
-          "logs:UpdateLogDelivery",
-          "logs:DeleteLogDelivery",
-          "logs:ListLogDeliveries",
-          "logs:PutLogEvents",
-          "logs:PutResourcePolicy",
-          "logs:DescribeResourcePolicies",
-          "logs:DescribeLogGroups"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
 }
