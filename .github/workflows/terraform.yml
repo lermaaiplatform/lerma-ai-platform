@@ -49,6 +49,8 @@ jobs:
           zip -r intake-handler.zip index.py
           cd ../content-generator
           zip -r content-generator.zip index.py
+          cd ../watchlist-fetcher
+          zip -r watchlist-fetcher.zip index.py
 
       - name: Terraform Init
         run: terraform init

@@ -57,6 +57,8 @@ module "lambda" {
   tenant_id                         = "tenant-001"
   from_email                        = var.tenant_001_email
   notify_email                      = var.tenant_001_email
+  proxycurl_secret_name             = module.secrets.proxycurl_secret_name
+  step_functions_role_arn           = module.iam.step_functions_role_arn
 }
 
 module "apigateway" {

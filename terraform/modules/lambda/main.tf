@@ -66,3 +66,37 @@ resource "aws_cloudwatch_log_group" "content_generator" {
   name              = "/aws/lambda/lerma-platform-content-generator-${var.environment}"
   retention_in_days = 30
 }
+
+# Zip the watchlist fetcher source code
+data "archive_file" "watchlist_fetcher" {
+  type        = "zip"
+  source_file = "${path.root}/../lambda/watchlist-fetcher/index.py"
+  output_path = "${path.root}/../lambda/watchlist-fetcher/watchlist-fetcher.zip"
+}
+
+# Watchlist Fetcher Lambda Function
+resource "aws_lambda_function" "watchlist_fetcher" {
+  function_name    = "lerma-platform-watchlist-fetcher-${var.environment}"
+  filename         = data.archive_file.watchlist_fetcher.output_path
+  source_code_hash = data.archive_file.watchlist_fetcher.output_base64sha256
+  role             = var.content_generator_lambda_role_arn
+  handler          = "index.handler"
+  runtime          = "python3.12"
+  timeout          = 300
+  memory_size      = 256
+
+  environment {
+    variables = {
+      DYNAMODB_TABLE        = var.dynamodb_table_name
+      PLATFORM_BUCKET       = var.platform_bucket_name
+      TENANT_ID             = var.tenant_id
+      PROXYCURL_SECRET_NAME = var.proxycurl_secret_name
+    }
+  }
+}
+
+# CloudWatch Log Group for watchlist fetcher
+resource "aws_cloudwatch_log_group" "watchlist_fetcher" {
+  name              = "/aws/lambda/lerma-platform-watchlist-fetcher-${var.environment}"
+  retention_in_days = 30
+}

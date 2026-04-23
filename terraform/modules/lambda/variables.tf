@@ -39,3 +39,13 @@ variable "notify_email" {
   type        = string
   sensitive   = true
 }
+
+variable "proxycurl_secret_name" {
+  description = "Name of the Proxycurl API key secret in Secrets Manager"
+  type        = string
+}
+
+variable "step_functions_role_arn" {
+  description = "ARN of the Step Functions IAM role"
+  type        = string
+}
