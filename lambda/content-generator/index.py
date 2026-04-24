@@ -48,7 +48,7 @@ def get_default_template():
 def generate_with_bedrock(prompt):
     try:
         response = bedrock.invoke_model(
-            modelId='us.anthropic.claude-3-5-sonnet-20241022-v2:0',
+            modelId='us.anthropic.claude-sonnet-4-6',
             body=json.dumps({
                 'anthropic_version': 'bedrock-2023-05-31',
                 'max_tokens': 1000,
@@ -68,40 +68,121 @@ def generate_with_bedrock(prompt):
 
 def generate_post_draft(tenant_record):
     methodology = tenant_record.get('methodology', 'executive coaching')
-    prompt = f"""You are a LinkedIn ghostwriter for an executive coach.
-    
+    brand_voice = tenant_record.get('brandVoice', '')
+    coach_name = tenant_record.get('coachName', 'the coach')
+
+    prompt = f"""You are a LinkedIn ghostwriter for {coach_name}, an executive coach in 2026.
+
 Their coaching methodology: {methodology}
 
-Write one LinkedIn post for today. The post should:
-- Be 150-200 words
-- Share a genuine insight about leadership or executive presence
-- End with a subtle call to reflection not a sales pitch
-- Sound like a thoughtful practitioner not a marketer
-- Use no hashtags
-- Use no emojis
+Their brand voice and writing style: {brand_voice}
 
-Write only the post text, nothing else."""
+Write one LinkedIn post in {coach_name}'s voice, optimized for the 2026 LinkedIn algorithm and mobile reading.
+
+STRICT FORMATTING RULES:
+- Open with a hook that is 3 to 5 words on its own line
+- Each sentence gets its own line
+- One blank line between each thought or idea
+- Never write more than 2 sentences together without a blank line
+- Total post length 150 to 180 words
+- End with one short reflective question on its own line
+- No hashtags
+- No emojis
+- No bullet points
+- No em dashes ever, use plain words instead
+
+CONTENT RULES:
+- Open with a short punchy hook that stops the scroll
+- Draw from Alan's concepts like Performance Theology, identity vs behavior, worth vs value
+- Make it feel like a practitioner sharing real lived experience
+- Never mention coaching services or a call to action
+- Sound like a thoughtful peer not a marketer
+- Use short punchy sentences like Alan does in his real posts
+
+FORMAT EXAMPLE:
+I watched a CEO do something rare.
+
+He said "I was wrong" in front of his board.
+
+The room shifted immediately.
+
+Defenses dropped.
+
+Real conversation started.
+
+Most leaders spend years learning to appear certain.
+
+They defend decisions instead of examining them.
+
+The executives I see grow fastest treat being wrong as data, not failure.
+
+Authority is not diminished by admitting error.
+
+It is reinforced by it.
+
+What would change if you said "I was wrong" more often than you defended being right?
+
+Write only the post text formatted exactly like the example above. Nothing else."""
 
     return generate_with_bedrock(prompt)
 
 
-def generate_comment_draft(post_text, target_name, target_title, methodology):
-    prompt = f"""You are a LinkedIn ghostwriter for an executive coach.
+def generate_first_comment(post_draft, tenant_record):
+    methodology = tenant_record.get('methodology', 'executive coaching')
+    brand_voice = tenant_record.get('brandVoice', '')
+    coach_name = tenant_record.get('coachName', 'the coach')
+
+    prompt = f"""You are a LinkedIn ghostwriter for {coach_name}, an executive coach in 2026.
 
 Their coaching methodology: {methodology}
 
-A target executive just posted this on LinkedIn:
+Their brand voice: {brand_voice}
+
+{coach_name} just published this LinkedIn post:
+---
+{post_draft}
+---
+
+Write a first comment that {coach_name} will post on their own post within 60 minutes of publishing.
+
+This comment should:
+- Add a personal story or vulnerable truth that did not fit in the post
+- Be 2 to 4 sentences maximum
+- Deepen the post rather than repeat it
+- Feel like an afterthought that is actually the most important thing
+- Draw from Alan's personal history with Performance Theology and growing up in a high-control environment
+- End with nothing salesy
+- No em dashes ever
+- Sound completely human and unscripted
+
+Write only the comment text, nothing else."""
+
+    return generate_with_bedrock(prompt)
+
+
+def generate_comment_draft(post_text, target_name, target_title, methodology, tenant_record={}):
+    brand_voice = tenant_record.get('brandVoice', '')
+    coach_name = tenant_record.get('coachName', 'the coach')
+
+    prompt = f"""You are a LinkedIn ghostwriter for {coach_name}, an executive coach in 2026.
+
+Their coaching methodology: {methodology}
+
+Their brand voice: {brand_voice}
+
+A target executive named {target_name}, {target_title}, just posted this on LinkedIn:
 ---
 {post_text[:500]}
 ---
 
-Write a genuine, thoughtful comment that:
-- Is 2-3 sentences maximum
-- Adds real value or a specific insight
-- Sounds like a peer practitioner not a vendor
-- Does not mention coaching services
+Write a genuine comment in {coach_name}'s voice that:
+- Is 2 to 3 sentences maximum
+- Adds a specific insight that connects to Alan's work around Performance Theology, identity, or self-worth
+- Sounds like a peer practitioner who has lived this work, not a vendor
+- Does not mention coaching services or a call to action
 - Does not use phrases like "great post" or "love this"
-- Feels like it came from a real person who read the post carefully
+- No em dashes ever
+- Feels like it came from someone who has genuinely lived and worked through these issues
 
 Write only the comment text, nothing else."""
 
@@ -131,13 +212,30 @@ def build_comments_block(comments):
     return '\n'.join(blocks)
 
 
-def send_digest_email(post_draft, comments, template):
+def send_digest_email(post_draft, first_comment, comments, template):
     today = datetime.now(timezone.utc).strftime('%A, %B %-d, %Y')
     comments_block = build_comments_block(comments)
 
+    post_html = (post_draft or 'No post generated today.') \
+        .replace('&', '&amp;') \
+        .replace('<', '&lt;') \
+        .replace('>', '&gt;') \
+        .replace('\n\n', '</p><p>') \
+        .replace('\n', '<br>')
+    post_html = f'<p>{post_html}</p>'
+
+    first_comment_html = (first_comment or '') \
+        .replace('&', '&amp;') \
+        .replace('<', '&lt;') \
+        .replace('>', '&gt;') \
+        .replace('\n\n', '</p><p>') \
+        .replace('\n', '<br>')
+    first_comment_html = f'<p>{first_comment_html}</p>'
+
     html_body = template \
         .replace('{{DATE}}', today) \
-        .replace('{{POST_DRAFT}}', post_draft or 'No post generated today.') \
+        .replace('{{POST_DRAFT}}', post_html) \
+        .replace('{{FIRST_COMMENT}}', first_comment_html) \
         .replace('{{COMMENT_COUNT}}', str(len(comments))) \
         .replace('{{COMMENTS_BLOCK}}', comments_block)
 
@@ -183,6 +281,9 @@ def handler(event, context):
         post_draft = generate_post_draft(tenant_record)
         logger.info("Post draft generated")
 
+        first_comment = generate_first_comment(post_draft, tenant_record) if post_draft else None
+        logger.info("First comment generated")
+
         pending_posts = table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key('PK').eq(
                 f'TENANT#{TENANT_ID}'
@@ -197,7 +298,7 @@ def handler(event, context):
             target_title = post_item.get('targetTitle', '')
 
             comment_draft = generate_comment_draft(
-                post_text, target_name, target_title, methodology
+                post_text, target_name, target_title, methodology, tenant_record
             )
 
             if comment_draft:
@@ -224,7 +325,7 @@ def handler(event, context):
         logger.info(f"Generated {len(comments)} comment drafts")
 
         template = get_digest_template()
-        sent = send_digest_email(post_draft, comments, template)
+        sent = send_digest_email(post_draft, first_comment, comments, template)
 
         return {
             'statusCode': 200,
