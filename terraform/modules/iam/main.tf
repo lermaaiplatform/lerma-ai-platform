@@ -122,12 +122,14 @@ resource "aws_iam_role_policy" "content_generator_lambda_policy" {
         Resource = "*"
       },
       {
-        Sid    = "DynamoDBRead"
+        Sid    = "DynamoDBReadWrite"
         Effect = "Allow"
         Action = [
           "dynamodb:GetItem",
           "dynamodb:Query",
-          "dynamodb:Scan"
+          "dynamodb:Scan",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem"
         ]
         Resource = var.dynamodb_table_arn
       },
