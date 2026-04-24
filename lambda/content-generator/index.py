@@ -292,7 +292,7 @@ def handler(event, context):
         )
 
         comments = []
-        for post_item in pending_posts.get('Items', [])[:3]:
+        for post_item in pending_posts.get('Items', [])[:5]:
             post_text = post_item.get('postText', '')
             target_name = post_item.get('targetName', '')
             target_title = post_item.get('targetTitle', '')
