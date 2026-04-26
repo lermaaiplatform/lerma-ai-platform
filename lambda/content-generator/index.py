@@ -195,6 +195,7 @@ def build_comments_block(comments):
 
     blocks = []
     for i, comment in enumerate(comments, 1):
+        post_url = comment.get('postLinkedinUrl', '#')
         block = f"""
     <div class="comment-card">
       <div class="comment-target">
@@ -205,6 +206,10 @@ def build_comments_block(comments):
         </div>
       </div>
       <div class="post-preview">{comment['postPreview']}</div>
+      <a href="{post_url}" target="_blank"
+         style="display:inline-block;margin-bottom:12px;padding:8px 16px;background:#0a66c2;color:white;text-decoration:none;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:0.05em;">
+        Open Post on LinkedIn
+      </a>
       <p class="comment-draft">{comment['commentDraft']}</p>
     </div>"""
         blocks.append(block)
@@ -306,7 +311,8 @@ def handler(event, context):
                     'targetName': target_name,
                     'targetTitle': target_title,
                     'postPreview': post_text[:200] + '...' if len(post_text) > 200 else post_text,
-                    'commentDraft': comment_draft
+                    'commentDraft': comment_draft,
+                    'postLinkedinUrl': post_item.get('postLinkedinUrl', '#')
                 })
 
                 table.update_item(
